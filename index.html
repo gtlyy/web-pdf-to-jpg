@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF转JPG工具 - Web版</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PDF转JPG工具</h1>
+            <p>将PDF文件转换为JPG图片，并可选择合并成一张大图</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="pdfFile">选择PDF文件:</label>
+                    <input type="file" id="pdfFile" accept=".pdf">
+                    <span id="fileName" class="file-name">未选择文件</span>
+                </div>
+
+                <div class="range-section">
+                    <div class="input-group">
+                        <label for="startPage">起始页:</label>
+                        <input type="number" id="startPage" min="1" value="1">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="endPage">结束页:</label>
+                        <input type="number" id="endPage" min="1" placeholder="留空表示最后一页">
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="input-group">
+                        <label for="imagePrefix">图片前缀:</label>
+                        <input type="text" id="imagePrefix" value="page_">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="quality">图片质量 DPI:</label>
+                        <select id="quality">
+                            <option value="100">100 DPI</option>
+                            <option value="200">200 DPI</option>
+                            <option value="300" selected>300 DPI</option>
+                            <option value="400">400 DPI</option>
+                            <option value="500">500 DPI</option>
+                            <option value="600">600 DPI</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="merge-section">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="createMerged">
+                        <label for="createMerged">创建合并图片 (all-in-one.jpg)</label>
+                    </div>
+                    
+                    <div id="mergeOptions" class="hidden">
+                        <div class="input-group">
+                            <label for="mergeDirection">合并方向:</label>
+                            <select id="mergeDirection">
+                                <option value="vertical" selected>竖向</option>
+                                <option value="horizontal">横向</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="outputMergedName">合并后文件名:</label>
+                            <input type="text" id="outputMergedName" value="all-in-one.jpg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <button id="convertBtn" class="btn btn-primary">开始转换</button>
+                </div>
+            </div>
+
+            <div id="progressContainer" class="hidden">
+                <div class="progress-bar">
+                    <div id="progressBar" class="progress-fill"></div>
+                </div>
+                <p id="progressText">准备中...</p>
+            </div>
+
+            <div id="resultSection" class="hidden">
+                <h3>转换结果</h3>
+                <div id="resultImages" class="result-images-grid"></div>
+                <div id="mergedImageContainer" class="merged-image-container hidden">
+                    <h4>合并后的图片</h4>
+                    <img id="mergedImage" alt="合并后的图片预览">
+                </div>
+                <button id="downloadAllBtn" class="btn btn-success">下载所有图片</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Web版PDF转JPG工具 &copy; 2026</p>
+        </footer>
+    </div>
+
+    <script src="libs/pdf.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
