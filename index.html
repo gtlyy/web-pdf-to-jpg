@@ -17,19 +17,29 @@
             <div class="input-section">
                 <div class="input-group">
                     <label for="pdfFile">选择PDF文件:</label>
-                    <input type="file" id="pdfFile" accept=".pdf">
-                    <span id="fileName" class="file-name">未选择文件</span>
+                    <div class="file-input-area" id="fileArea">
+                        <input type="file" id="pdfFile" accept=".pdf">
+                        <span id="fileName" class="file-name">点击此处选择PDF文件</span>
+                    </div>
                 </div>
 
                 <div class="range-section">
                     <div class="input-group">
                         <label for="startPage">起始页:</label>
-                        <input type="number" id="startPage" min="1" value="1">
+                        <div class="number-input-container">
+                            <input type="number" id="startPage" min="1" value="1">
+                            <button type="button" class="number-control-btn up" id="startPageUp">▲</button>
+                            <button type="button" class="number-control-btn down" id="startPageDown">▼</button>
+                        </div>
                     </div>
                     
                     <div class="input-group">
                         <label for="endPage">结束页:</label>
-                        <input type="number" id="endPage" min="1" placeholder="留空表示最后一页">
+                        <div class="number-input-container">
+                            <input type="number" id="endPage" min="1" placeholder="留空表示最后一页">
+                            <button type="button" class="number-control-btn up" id="endPageUp">▲</button>
+                            <button type="button" class="number-control-btn down" id="endPageDown">▼</button>
+                        </div>
                     </div>
                 </div>
 
@@ -97,9 +107,9 @@
             </div>
         </main>
 
-        <footer>
-            <p>Web版PDF转JPG工具 &copy; 2026</p>
-        </footer>
+    <footer>
+        <p>Web版PDF转JPG工具 &copy; 2026 By gtlyy</p>
+    </footer>
     </div>
 
     <script src="libs/pdf.min.js"></script>

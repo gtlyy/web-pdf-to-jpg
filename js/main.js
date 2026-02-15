@@ -5,8 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // 页面元素
     const pdfFileInput = document.getElementById('pdfFile');
     const fileNameSpan = document.getElementById('fileName');
+    const fileArea = document.getElementById('fileArea');
     const startPageInput = document.getElementById('startPage');
     const endPageInput = document.getElementById('endPage');
+    const startPageUpBtn = document.getElementById('startPageUp');
+    const startPageDownBtn = document.getElementById('startPageDown');
+    const endPageUpBtn = document.getElementById('endPageUp');
+    const endPageDownBtn = document.getElementById('endPageDown');
     const imagePrefixInput = document.getElementById('imagePrefix');
     const qualitySelect = document.getElementById('quality');
     const createMergedCheckbox = document.getElementById('createMerged');
@@ -33,7 +38,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const file = e.target.files[0];
             loadPdfPreview(file);
         } else {
-            fileNameSpan.textContent = '未选择文件';
+            fileNameSpan.textContent = '点击此处选择PDF文件';
+        }
+    });
+    
+    // 点击文件区域也可以选择文件
+    fileArea.addEventListener('click', function(e) {
+        if (e.target !== pdfFileInput) {
+            pdfFileInput.click();
         }
     });
     
@@ -48,6 +60,47 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 开始转换事件
     convertBtn.addEventListener('click', startConversion);
+    
+    // 起始页增减按钮
+    startPageUpBtn.addEventListener('click', function() {
+        const currentValue = parseInt(startPageInput.value) || 0;
+        startPageInput.value = currentValue + 1;
+    });
+    
+    startPageDownBtn.addEventListener('click', function() {
+        const currentValue = parseInt(startPageInput.value) || 1;
+        if (currentValue > 1) {
+            startPageInput.value = currentValue - 1;
+        }
+    });
+    
+    // 结束页增减按钮
+    endPageUpBtn.addEventListener('click', function() {
+        const currentValue = parseInt(endPageInput.value) || 0;
+        endPageInput.value = currentValue + 1;
+    });
+    
+    endPageDownBtn.addEventListener('click', function() {
+        const currentValue = parseInt(endPageInput.value) || 0;
+        if (currentValue > 0) {
+            endPageInput.value = currentValue - 1;
+        }
+    });
+    
+    // 鼠标滚轮调整页码
+    startPageInput.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 1 : -1;
+        const currentValue = parseInt(this.value) || 0;
+        this.value = Math.max(1, currentValue + delta);
+    });
+    
+    endPageInput.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 1 : -1;
+        const currentValue = parseInt(this.value) || 0;
+        this.value = Math.max(0, currentValue + delta);
+    });
     
     // 加载PDF并预览页数
     async function loadPdfPreview(file) {
