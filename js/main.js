@@ -1,5 +1,5 @@
 // 设置pdf.js worker路径
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     // 页面元素
