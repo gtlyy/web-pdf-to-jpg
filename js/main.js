@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const pdfFileInput = document.getElementById('pdfFile');
     const fileNameSpan = document.getElementById('fileName');
     const fileArea = document.getElementById('fileArea');
+    const controlsDiv = document.getElementById('controls');
+    
+    // 调试：确认控件元素是否存在
+    console.log('Controls div found:', controlsDiv);
+    
+    // 确保控件初始状态为隐藏
+    if (controlsDiv) {
+        controlsDiv.style.display = 'none';
+    }
     const startPageInput = document.getElementById('startPage');
     const endPageInput = document.getElementById('endPage');
     const startPageUpBtn = document.getElementById('startPageUp');
@@ -25,20 +34,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const mergedImageContainer = document.getElementById('mergedImageContainer');
     const mergedImage = document.getElementById('mergedImage');
     const downloadAllBtn = document.getElementById('downloadAllBtn');
+    const downloadZipBtn = document.getElementById('downloadZipBtn');
     
     // 全局变量
     let pdfDoc = null;
     let allPageImages = [];
     
     // 文件选择事件
-    pdfFileInput.addEventListener('change', function(e) {
+    pdfFileInput.addEventListener('change', async function(e) {
+        console.log('File selected, files length:', e.target.files.length);
         if (e.target.files.length > 0) {
             fileNameSpan.textContent = e.target.files[0].name;
+            // 显示控制面板
+            if (controlsDiv) {
+                console.log('Showing controls div');
+                controlsDiv.style.display = 'block';
+            }
             // 自动设置最大页数
             const file = e.target.files[0];
-            loadPdfPreview(file);
+            try {
+                await loadPdfPreview(file);
+            } catch (error) {
+                // PDF加载失败，但控件已经显示
+                console.error('加载PDF预览失败:', error);
+            }
         } else {
             fileNameSpan.textContent = '点击此处选择PDF文件';
+            if (controlsDiv) {
+                controlsDiv.style.display = 'none';
+            }
         }
     });
     
@@ -52,9 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 切换合并选项显示
     createMergedCheckbox.addEventListener('change', function() {
         if (this.checked) {
-            mergeOptionsDiv.classList.remove('hidden');
+            mergeOptionsDiv.style.display = 'block';
         } else {
-            mergeOptionsDiv.classList.add('hidden');
+            mergeOptionsDiv.style.display = 'none';
         }
     });
     
@@ -153,8 +177,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // 显示进度条
-            progressContainer.classList.remove('hidden');
-            resultSection.classList.add('hidden');
+            progressContainer.style.display = 'block';
+            resultSection.style.display = 'none';
             
             // 执行转换
             await convertPdfToImages(pdfDoc, startPage, effectiveEndPage, imagePrefix, quality, createMerged);
@@ -162,13 +186,15 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('转换过程中发生错误:', error);
             alert(`转换失败: ${error.message}`);
-            progressContainer.classList.add('hidden');
+            progressContainer.style.display = 'none';
         }
     }
     
     // 执行PDF到图片的转换
     async function convertPdfToImages(pdf, startPage, endPage, prefix, quality, createMerged) {
         allPageImages = [];
+        // 隐藏合并图片容器（将在需要时重新显示）
+        mergedImageContainer.style.display = 'none';
         const totalPageCount = endPage - startPage + 1;
         
         // 设置缩放比例，基于DPI计算
@@ -221,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const mergedImageUrl = await mergeImages(allPageImages, mergeDirection);
             
             mergedImage.src = mergedImageUrl;
-            mergedImageContainer.classList.remove('hidden');
+            mergedImageContainer.style.display = 'block';
         }
         
         updateProgress('转换完成！', 100);
@@ -242,7 +268,14 @@ document.addEventListener('DOMContentLoaded', function() {
             resultImagesDiv.appendChild(imgElement);
         });
         
-        resultSection.classList.remove('hidden');
+        resultSection.style.display = 'block';
+        
+        // 根据是否创建合并图片来控制合并图片容器的显示
+        if (showMerged) {
+            // 合并图片将在稍后显示
+        } else {
+            mergedImageContainer.style.display = 'none';
+        }
     }
     
     // 合并图片
@@ -321,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // 如果有合并图片，也提供下载
-        if (!mergedImageContainer.classList.contains('hidden')) {
+        if (mergedImageContainer.style.display !== 'none') {
             const mergedLink = document.createElement('a');
             mergedLink.href = mergedImage.src;
             mergedLink.download = document.getElementById('outputMergedName').value || 'all-in-one.jpg';
@@ -330,4 +363,42 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.removeChild(mergedLink);
         }
     }
+    
+    // 下载ZIP文件
+    async function downloadZipFile() {
+        try {
+            const zip = new JSZip();
+            
+            // 添加所有图片到ZIP
+            for (const imgData of allPageImages) {
+                // 将data URL转换为blob
+                const blob = await fetch(imgData.dataUrl).then(res => res.blob());
+                zip.file(imgData.filename, blob);
+            }
+            
+            // 如果有合并图片，也添加到ZIP
+            if (mergedImageContainer.style.display !== 'none') {
+                const mergedBlob = await fetch(mergedImage.src).then(res => res.blob());
+                const mergedFilename = document.getElementById('outputMergedName').value || 'all-in-one.jpg';
+                zip.file(mergedFilename, mergedBlob);
+            }
+            
+            // 生成ZIP文件并下载
+            const zipBlob = await zip.generateAsync({type: 'blob'});
+            const zipUrl = URL.createObjectURL(zipBlob);
+            const link = document.createElement('a');
+            link.href = zipUrl;
+            link.download = 'pdf-images.zip';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(zipUrl);
+        } catch (error) {
+            console.error('生成ZIP文件时出错:', error);
+            alert('生成ZIP文件时发生错误，请重试');
+        }
+    }
+    
+    // 绑定ZIP下载按钮事件
+    downloadZipBtn.onclick = downloadZipFile;
 });

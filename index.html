@@ -22,7 +22,9 @@
                         <span id="fileName" class="file-name">点击此处选择PDF文件</span>
                     </div>
                 </div>
+            </div>
 
+            <div id="controls" style="display: none;">
                 <div class="range-section">
                     <div class="input-group">
                         <label for="startPage">起始页:</label>
@@ -70,7 +72,7 @@
                         <label for="createMerged">创建合并图片 (all-in-one.jpg)</label>
                     </div>
                     
-                    <div id="mergeOptions" class="hidden">
+                    <div id="mergeOptions" style="display: none;">
                         <div class="input-group">
                             <label for="mergeDirection">合并方向:</label>
                             <select id="mergeDirection">
@@ -91,21 +93,24 @@
                 </div>
             </div>
 
-            <div id="progressContainer" class="hidden">
+            <div id="progressContainer" style="display: none;">
                 <div class="progress-bar">
                     <div id="progressBar" class="progress-fill"></div>
                 </div>
                 <p id="progressText">准备中...</p>
             </div>
 
-            <div id="resultSection" class="hidden">
+            <div id="resultSection" style="display: none;">
                 <h3>转换结果</h3>
                 <div id="resultImages" class="result-images-grid"></div>
-                <div id="mergedImageContainer" class="merged-image-container hidden">
+                <div id="mergedImageContainer" class="merged-image-container" style="display: none;">
                     <h4>合并后的图片</h4>
                     <img id="mergedImage" alt="合并后的图片预览">
                 </div>
-                <button id="downloadAllBtn" class="btn btn-success">下载所有图片</button>
+                <div class="download-options">
+                    <button id="downloadAllBtn" class="btn btn-success">下载所有图片</button>
+                    <button id="downloadZipBtn" class="btn btn-info">下载ZIP文件</button>
+                </div>
             </div>
         </main>
 
@@ -115,6 +120,7 @@
     </div>
 
     <script src="libs/pdf.min.js"></script>
+    <script src="libs/jszip.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

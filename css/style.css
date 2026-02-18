@@ -196,9 +196,7 @@ input[type="number"]::-webkit-outer-spin-button {
     border-radius: 5px;
 }
 
-.hidden {
-    display: none;
-}
+
 
 .btn {
     padding: 12px 24px;
@@ -228,9 +226,27 @@ input[type="number"]::-webkit-outer-spin-button {
     background-color: #27ae60;
 }
 
+.btn-info {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #2980b9;
+}
+
 .action-section {
     text-align: center;
     margin: 20px 0;
+}
+
+.download-options {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.download-options .btn {
+    margin: 5px 10px;
 }
 
 .progress-container {
